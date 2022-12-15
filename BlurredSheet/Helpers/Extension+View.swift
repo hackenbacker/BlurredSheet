@@ -52,14 +52,13 @@ fileprivate struct WithoutBackgroundColor: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIView, context: Context) {
-        Task {
-            await MainActor.run {
-                // MARK: - This method is not recommended because it may not work
-                // MARK: if the VIEW hierarchical structure changes due to an iOS version up. -
-                // MARK: - この方法は推奨しない。
-                // MARK: iOSのバージョンアップでVIEWの階層構造が変わったら動かなくなる可能性があるため。 -
-                uiView.superview?.superview?.backgroundColor = .clear
-            }
+        // UI must be updated on Main Thread
+        Task { @MainActor in
+            // MARK: - This method is not recommended because it may not work
+            // MARK: if the VIEW hierarchical structure changes due to an iOS version up. -
+            // MARK: - この方法は推奨しない。
+            // MARK: iOSのバージョンアップでVIEWの階層構造が変わったら動かなくなる可能性があるため。 -
+            uiView.superview?.superview?.backgroundColor = .clear
         }
     }
 }
